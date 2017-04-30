@@ -1,4 +1,4 @@
-package com.ai.AIBase.GesturePassword;
+package com.ai.AIBase.gesture;
 
 import android.content.Context;
 import android.graphics.Canvas;

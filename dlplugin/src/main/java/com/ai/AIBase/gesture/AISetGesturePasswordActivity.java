@@ -1,9 +1,8 @@
-package com.ai.AIBase.GesturePassword;
+package com.ai.AIBase.gesture;
 
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,38 +33,38 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
 
     private void initView() {
 
-        this.mRelativeLayout = new RelativeLayout(this);
-        this.mRelativeLayout.setPadding(Utility.dip2px(this,16),Utility.dip2px(this,16),
+        mRelativeLayout = new RelativeLayout(this);
+        mRelativeLayout.setPadding(Utility.dip2px(this,16),Utility.dip2px(this,16),
                 Utility.dip2px(this,16),Utility.dip2px(this,16));
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        this.mRelativeLayout.setLayoutParams(params);
+        mRelativeLayout.setLayoutParams(params);
 
 
         RelativeLayout.LayoutParams tvParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         tvParams.setMargins(0,Utility.dip2px(this,16),0,0);
 
-        this.mTextView = new TextView(this);
-        this.mTextView.setText("请绘制手势密码");
-        this.mTextView.setTextSize(16);
-        this.mTextView.setGravity(Gravity.CENTER);
-        this.mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        this.mRelativeLayout.addView(this.mTextView,tvParams);
+        mTextView = new TextView(this);
+        mTextView.setText("请绘制手势密码");
+        mTextView.setTextSize(16);
+        mTextView.setGravity(Gravity.CENTER);
+        mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        mRelativeLayout.addView(mTextView,tvParams);
 
-        this.mGesturePasswordLayout = new AIGesturePasswordLayout(this);
-        this.mGesturePasswordLayout.setGravity(Gravity.CENTER_VERTICAL);
-        this.mGesturePasswordLayout.setBackgroundColor(0x00ffffff);
-        this.mGesturePasswordLayout.setUnMatchExceedBoundary(10000);
-        this.mGesturePasswordLayout.isFirstSet(true);
-        this.mGesturePasswordLayout.setOnGestureLockViewListener(mListener);
+        mGesturePasswordLayout = new AIGesturePasswordLayout(this);
+        mGesturePasswordLayout.setGravity(Gravity.CENTER_VERTICAL);
+        mGesturePasswordLayout.setBackgroundColor(0x00ffffff);
+        mGesturePasswordLayout.setUnMatchExceedBoundary(10000);
+        mGesturePasswordLayout.isFirstSet(true);
+        mGesturePasswordLayout.setOnGestureLockViewListener(mListener);
         //
         tvParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
-        this.mRelativeLayout.addView(this.mGesturePasswordLayout,tvParams);
-        this.setContentView(this.mRelativeLayout);
+        mRelativeLayout.addView(mGesturePasswordLayout,tvParams);
+        setContentView(mRelativeLayout);
     }
 
 

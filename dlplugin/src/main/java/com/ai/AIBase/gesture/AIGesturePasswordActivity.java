@@ -1,11 +1,10 @@
-package com.ai.AIBase.GesturePassword;
+package com.ai.AIBase.gesture;
 
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,52 +33,53 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
 
     private void initView() {
 
-        this.mLinearLayout = new LinearLayout(this);
+        mLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
 
         mLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        this.mLinearLayout.setPadding(Utility.dip2px(this,16),Utility.dip2px(this,16),
+        mLinearLayout.setPadding(Utility.dip2px(this,16),Utility.dip2px(this,16),
                 Utility.dip2px(this,16),Utility.dip2px(this,16));
 
-        this.mLinearLayout.setLayoutParams(params);
+        mLinearLayout.setLayoutParams(params);
 
         LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
 
         tvParams.setMargins(0,Utility.dip2px(this,16),0,0);
         tvParams.gravity = Gravity.CENTER;
-        this.mImageView = new ImageView(this);
+        mImageView = new ImageView(this);
         //设置头像
 
-        this.mImageView.setContentDescription("头像");
-        this.mLinearLayout.addView(this.mImageView,tvParams);
+        mImageView.setContentDescription("头像");
+        mLinearLayout.addView(this.mImageView,tvParams);
 
         tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        this.mTextView = new TextView(this);
-        this.mTextView.setText("请绘制手势密码");
-        this.mTextView.setTextSize(16);
-        this.mTextView.setGravity(Gravity.CENTER);
-        this.mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        this.mLinearLayout.addView(this.mTextView,tvParams);
+        mTextView = new TextView(this);
+        mTextView.setText("请绘制手势密码");
+        mTextView.setTextSize(16);
+        mTextView.setGravity(Gravity.CENTER);
+        mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        mLinearLayout.addView(mTextView,tvParams);
 
-        this.mGesturePasswordLayout = new AIGesturePasswordLayout(this);
-        this.mGesturePasswordLayout.setGravity(Gravity.CENTER_VERTICAL);
-        this.mGesturePasswordLayout.setBackgroundColor(0x00ffffff);
-        this.mGesturePasswordLayout.setTryTimes(4);
+        mGesturePasswordLayout = new AIGesturePasswordLayout(this);
+        mGesturePasswordLayout.setGravity(Gravity.CENTER_VERTICAL);
+        mGesturePasswordLayout.setBackgroundColor(0x00ffffff);
+        mGesturePasswordLayout.setTryTimes(4);
 
         // 设置初始密码,可以根据本地存储的密码
-        this.mGesturePasswordLayout.setAnswer("14789");
+        mGesturePasswordLayout.setAnswer("14789");
 
-        this.mGesturePasswordLayout.setShowPath(true);
-        this.mGesturePasswordLayout.isFirstSet(false);
-        this.mGesturePasswordLayout.setOnGestureLockViewListener(mListener);
+        mGesturePasswordLayout.setShowPath(true);
+        mGesturePasswordLayout.isFirstSet(false);
+        mGesturePasswordLayout.setOnGestureLockViewListener(mListener);
+
         //
         tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        this.mLinearLayout.addView(this.mGesturePasswordLayout,tvParams);
-        this.setContentView(this.mLinearLayout);
+        mLinearLayout.addView(mGesturePasswordLayout,tvParams);
+        setContentView(mLinearLayout);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
     private void gestureEvent(boolean matched) {
         if (matched) {
             mTextView.setText("输入正确");
-            //finish();
+            finish();
         } else {
             mTextView.setText("手势错误，还剩"+ mGesturePasswordLayout.getTryTimes() + "次");
         }

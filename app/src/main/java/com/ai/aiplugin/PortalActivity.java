@@ -1,5 +1,6 @@
 package com.ai.aiplugin;
 
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.os.Environment;
@@ -12,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.ai.AIBase.gesture.AIGesturePasswordActivity;
+import com.ai.AIBase.gesture.AISignatureActivity;
 import com.ai.aiplugin.R;
 import com.ryg.dynamicload.internal.DLIntent;
 import com.ryg.dynamicload.internal.DLPluginManager;
@@ -43,6 +47,24 @@ public class PortalActivity extends AppCompatActivity implements AdapterView.OnI
         mPluginAdapter = new PluginAdapter();
         mListView = (ListView) findViewById(R.id.plugin_list);
         mNoPluginTextView = (TextView)findViewById(R.id.no_plugin);
+
+        Button button = (Button)findViewById(R.id.signture);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PortalActivity.this, AISignatureActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button button1 = (Button)findViewById(R.id.gesturePassword);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PortalActivity.this, AIGesturePasswordActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initData() {
