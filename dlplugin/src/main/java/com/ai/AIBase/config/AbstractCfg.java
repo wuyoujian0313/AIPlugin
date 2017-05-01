@@ -4,34 +4,22 @@ import com.ailk.common.data.IData;
 
 import java.io.InputStream;
 
-public abstract class AbstractCfg {
+public class AbstractCfg {
 	
 	protected String fileName;
 	protected InputStream stream;
 	protected IData cache;
 
-	public InputStream getStream() {
-		return stream;
+	public void parseConfig(String configFileName) {
+		fileName = configFileName;
+		cache = loadConfig();
 	}
 
-	public void setStream(InputStream stream) {
-		this.stream = stream;
-	}
+	protected IData loadConfig() {return null;}
 
-	/**
-	 * get file name
-	 * @return IData
-	 */
-	public String getFileName() {
-		return fileName;
-	}
-
-	/**
-	 *
-	 * @param fileName
-     */
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void parseConfig(InputStream configFileStream) {
+		stream = configFileStream;
+		cache = loadConfig();
 	}
 
 	/**

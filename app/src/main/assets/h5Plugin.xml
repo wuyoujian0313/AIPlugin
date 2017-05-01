@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<h5Plugins>
+    <plugin name="AIWebViewBasePlugin" class="com.ai.AIBase.AIWebViewBasePlugin"></plugin>
+</h5Plugins>

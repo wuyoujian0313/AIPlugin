@@ -1,5 +1,6 @@
 package com.ai.aiplugin;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
@@ -20,13 +21,20 @@ import android.widget.TextView;
 
 import com.ai.AIBase.gesture.AIGesturePasswordActivity;
 import com.ai.AIBase.gesture.AISignatureActivity;
+import com.ai.AIBase.util.HttpUtil;
 import com.ai.aiplugin.R;
 import com.ryg.dynamicload.internal.DLIntent;
 import com.ryg.dynamicload.internal.DLPluginManager;
 import com.ryg.utils.DLUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class PortalActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private ArrayList<PluginItem> mPluginItems = new ArrayList<PluginItem>();
@@ -68,9 +76,47 @@ public class PortalActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void initData() {
-        String pluginFolder = getCacheDir().getAbsolutePath()+ "/DynamicLoadHost";
-        //Environment.getExternalStorageDirectory() + "/DynamicLoadHost";
+
+
+
+        String pluginsFolderName = "Plugins";
+        final String pluginFolder = getCacheDir().getAbsolutePath()+ "/" + pluginsFolderName;
+        File folder = new File(pluginFolder);
+        folder.delete();
+        folder.mkdir();
+
+        HttpUtil.sendOkHttpRequest("http://192.168.1.104/crmapp-debug.apk",new okhttp3.Callback(){
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                String pluginFile = pluginFolder +"/crmapp-debug.apk";
+                //String pluginFolder = Environment.getExternalStorageDirectory() + "/DynamicLoadHost";
+
+                File file = new File(pluginFile);
+                byte[] data = response.body().bytes();
+
+
+                RandomAccessFile savedFile = new RandomAccessFile(file,"rw");
+                savedFile.write(data);
+                response.body().close();
+                savedFile.close();
+
+                refreshPluginListView();
+            }
+        });
+    }
+
+
+    private void refreshView () {
+        String pluginsFolderName = "Plugins";
+        String pluginFolder = getCacheDir().getAbsolutePath()+ "/" + pluginsFolderName;
         File file = new File(pluginFolder);
+
         File[] plugins = file.listFiles();
         if (plugins == null || plugins.length == 0) {
             mNoPluginTextView.setVisibility(View.VISIBLE);
@@ -83,12 +129,10 @@ public class PortalActivity extends AppCompatActivity implements AdapterView.OnI
             item.packageInfo = DLUtils.getPackageInfo(this, item.pluginPath);
 
             // 需要通过配置设置插件的入口activity
-            if (item.packageInfo.activities != null && item.packageInfo.activities.length > 0) {
+            if (item.packageInfo != null && item.packageInfo.activities != null && item.packageInfo.activities.length > 0) {
                 item.launcherActivityName = "com.ai.crmapp.MainActivity";// item.packageInfo.activities[0].name;
             }
-            if (item.packageInfo.services != null && item.packageInfo.services.length > 0) {
-                item.launcherServiceName = item.packageInfo.services[0].name;
-            }
+
             mPluginItems.add(item);
             DLPluginManager.getInstance(this).loadApk(item.pluginPath);
         }
@@ -96,6 +140,15 @@ public class PortalActivity extends AppCompatActivity implements AdapterView.OnI
         mListView.setAdapter(mPluginAdapter);
         mListView.setOnItemClickListener(this);
         mPluginAdapter.notifyDataSetChanged();
+    }
+
+    private void refreshPluginListView () {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                refreshView();
+            }
+        });
     }
 
     private class PluginAdapter extends BaseAdapter {

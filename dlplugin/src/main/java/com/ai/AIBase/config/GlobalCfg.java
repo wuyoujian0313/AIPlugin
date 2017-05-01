@@ -15,23 +15,10 @@ public class GlobalCfg extends AbstractCfg {
 	 * get instance
 	 * @return GlobalCfg
 	 */
-	public static GlobalCfg getInstance(String configFileName) {
+	public static GlobalCfg getInstance() {
 		if (instance == null) {
 			synchronized (GlobalCfg.class) {
 				instance = new GlobalCfg();
-				instance.setFileName(configFileName);
-				instance.cache = instance.loadConfig();
-			}
-		}
-		return instance;
-	}
-
-	public static GlobalCfg getInstance(InputStream stream) {
-		if (instance == null) {
-			synchronized (GlobalCfg.class) {
-				instance = new GlobalCfg();
-				instance.setStream(stream);
-				instance.cache = instance.loadConfig();
 			}
 		}
 		return instance;
@@ -41,10 +28,12 @@ public class GlobalCfg extends AbstractCfg {
 	 * load config
 	 * @return IData
 	 */
+	@Override
 	protected IData loadConfig() {
+		super.loadConfig();
 		try {
-			if (this.getStream() != null) {
-				return Parser.loadProperties(this.getStream());
+			if (this.stream != null) {
+				return Parser.loadProperties(this.stream);
 			}
 			return Parser.loadProperties(fileName);
 		} catch (Exception e) {

@@ -19,7 +19,7 @@ public class AIWebViewActivity extends DLBasePluginActivity {
     private LinearLayout mLinearLayout;
 
     private String glabalCfgFile = "global.properties";
-    private String pluginCfgFile = "plugin.xml";
+    private String pluginCfgFile = "h5Plugin.xml";
 
 
     public AIWebViewActivity(String glabalCfgFile, String pluginCfgFile) {
@@ -28,7 +28,7 @@ public class AIWebViewActivity extends DLBasePluginActivity {
     }
 
     public AIWebViewActivity() {
-        this.pluginCfgFile = "plugin.xml";
+        this.pluginCfgFile = "h5Plugin.xml";
         this.glabalCfgFile = "global.properties";
     }
 
@@ -66,7 +66,10 @@ public class AIWebViewActivity extends DLBasePluginActivity {
 
         try {
             InputStream is = this.getResources().getAssets().open(glabalCfgFile);
-            String url = GlobalCfg.getInstance(is).attr(GlobalCfg.CONFIG_FIELD_ONLINEADDR);
+            GlobalCfg globalCfg = GlobalCfg.getInstance();
+            globalCfg.parseConfig(is);
+
+            String url = GlobalCfg.getInstance().attr(GlobalCfg.CONFIG_FIELD_ONLINEADDR);
             this.webView.loadUrl(url);
         } catch (Exception e) {
             e.printStackTrace();

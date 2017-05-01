@@ -5,8 +5,7 @@ import android.os.Handler;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
-import com.ai.AIBase.config.GlobalCfg;
-import com.ai.AIBase.config.PluginCfg;
+import com.ai.AIBase.config.WebViewPluginCfg;
 import com.ai.AIBase.util.BeanInvoker;
 import com.ryg.dynamicload.DLBasePluginActivity;
 
@@ -46,12 +45,14 @@ public class AIWebViewPluginEngine {
         this.mPluginCfgFile = configFileName;
         try {
             InputStream is = mActivity.getResources().getAssets().open(mPluginCfgFile);
-            PluginCfg plugincfg = PluginCfg.getInstance(is);
+            WebViewPluginCfg plugincfg = WebViewPluginCfg.getInstance();
+            plugincfg.parseConfig(is);
+
             String[] names = plugincfg.getNames();
             if (names.length > 0) mWebView.getSettings().setJavaScriptEnabled(true);
 
             for (String name : names) {
-                String className = plugincfg.attr(name, PluginCfg.CONFIG_ATTR_CLASS);
+                String className = plugincfg.attr(name, WebViewPluginCfg.CONFIG_ATTR_CLASS);
                 AIWebViewBasePlugin plugin = (AIWebViewBasePlugin) BeanInvoker.instance(className,DLBasePluginActivity.class,mActivity,false);
                 mWebView.addJavascriptInterface(plugin, name);
             }

@@ -8,36 +8,23 @@ import com.ailk.common.data.impl.DataMap;
 
 import java.io.InputStream;
 
-public class PluginCfg extends AbstractCfg {
+public class WebViewPluginCfg extends AbstractCfg {
 
 	public static final String CONFIG_FIND_PATH = "plugin";
 	public static final String CONFIG_ATTR_NAME = "name";
 	public static final String CONFIG_ATTR_CLASS = "class";
 	
-	private static PluginCfg instance;
+	private static WebViewPluginCfg instance;
 	
 	/**
 	 * get instance
 	 * @return DataCfg
 	 * @throws Exception
 	 */
-	public static PluginCfg getInstance(String configFileName) {
+	public static WebViewPluginCfg getInstance() {
 		if (instance == null) {
-			synchronized (PluginCfg.class) {
-				instance = new PluginCfg();
-				instance.setFileName(configFileName);
-				instance.cache = instance.loadConfig();
-			}
-		}
-		return instance;
-	}
-
-	public static PluginCfg getInstance(InputStream stream) {
-		if (instance == null) {
-			synchronized (GlobalCfg.class) {
-				instance = new PluginCfg();
-				instance.setStream(stream);
-				instance.cache = instance.loadConfig();
+			synchronized (WebViewPluginCfg.class) {
+				instance = new WebViewPluginCfg();
 			}
 		}
 		return instance;
@@ -47,14 +34,16 @@ public class PluginCfg extends AbstractCfg {
 	 * load config
 	 * @return IData
 	 */
+	@Override
 	protected IData loadConfig() {
+		super.loadConfig();
 		IData config = new DataMap();
 		try {
 			IDataset dataset;
-			if (this.getStream() != null) {
-				dataset = Parser.loadXML(this.getStream(), CONFIG_FIND_PATH);
+			if (this.stream != null) {
+				dataset = Parser.loadXML(this.stream, CONFIG_FIND_PATH);
 			} else {
-				dataset = Parser.loadXML(fileName, CONFIG_FIND_PATH);
+				dataset = Parser.loadXML(this.fileName, CONFIG_FIND_PATH);
 			}
 
 			for (int i=0; i<dataset.size(); i++) {
