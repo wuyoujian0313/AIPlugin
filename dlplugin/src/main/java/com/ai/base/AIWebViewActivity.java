@@ -1,11 +1,10 @@
-package com.ai.AIBase;
+package com.ai.base;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 
-import com.ai.AIBase.config.GlobalCfg;
+import com.ai.base.config.GlobalCfg;
 import com.ryg.dynamicload.DLBasePluginActivity;
 
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package com.ai.AIBase;
+package com.ai.base;
 
 /**
  * Created by wuyoujian on 17/3/30.

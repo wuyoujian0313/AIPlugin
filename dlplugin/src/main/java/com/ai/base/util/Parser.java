@@ -1,6 +1,5 @@
-package com.ai.AIBase.util;
+package com.ai.base.util;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;

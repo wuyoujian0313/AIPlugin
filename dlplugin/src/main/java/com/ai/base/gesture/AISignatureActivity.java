@@ -1,4 +1,4 @@
-package com.ai.AIBase.gesture;
+package com.ai.base.gesture;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import com.ai.AIBase.AIBaseActivity;
-import com.ai.AIBase.util.Utility;
+import com.ai.base.AIBaseActivity;
+import com.ai.base.util.Utility;
 
 import java.io.File;
 import java.io.IOException;

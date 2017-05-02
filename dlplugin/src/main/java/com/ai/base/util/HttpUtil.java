@@ -1,4 +1,4 @@
-package com.ai.AIBase.util;
+package com.ai.base.util;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

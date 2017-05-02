@@ -26,6 +26,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -37,8 +38,8 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
-import com.ai.AIBase.AIBaseActivity;
 import com.ryg.dynamicload.internal.DLIntent;
 import com.ryg.dynamicload.internal.DLPluginManager;
 import com.ryg.dynamicload.internal.DLPluginPackage;
@@ -50,7 +51,7 @@ import com.ryg.utils.DLConstants;
  * @see {@link DLBasePluginActivity.that}
  * @author renyugang
  */
-public class DLBasePluginActivity extends AIBaseActivity implements DLPlugin {
+public class DLBasePluginActivity extends AppCompatActivity implements DLPlugin {
 
     private static final String TAG = "DLBasePluginActivity";
 

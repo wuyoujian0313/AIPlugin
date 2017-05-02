@@ -1,4 +1,4 @@
-package com.ai.AIBase.gesture;
+package com.ai.base.gesture;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -30,16 +30,11 @@ public class AIGesturePasswordLayout extends RelativeLayout {
      * 每个边上的AIGesturePasswordView的个数
      */
     public int mCount = 3;
-    /**
-     * 存储答案
-     */
-    private List<Integer> mAnswer = new ArrayList<>();
+
     /**
      * 保存用户选中的AIGesturePasswordView的id, 编码从 0 到 mCount*mCount - 1
      */
     private List<Integer> mChoose = new ArrayList<Integer>();
-
-    private String firstSetAnswerStr = "";
 
     /**
      * 密码路径画笔
@@ -111,10 +106,6 @@ public class AIGesturePasswordLayout extends RelativeLayout {
      */
     private Point mTmpTarget = new Point();
 
-    /**
-     * 最大尝试次数
-     */
-    private int tryTimes = 3;
     /**
      * 回调接口
      */
@@ -274,28 +265,8 @@ public class AIGesturePasswordLayout extends RelativeLayout {
             case MotionEvent.ACTION_UP:
                 // 回调是否成功
                 if (mOnGesturePasswordViewListener != null && mChoose.size() > 0) {
-                    //如果是初次设置图案，不需要checkAnswer()，但需要setAnswer()
-                    if (isFirstSet) {
-                        boolean patternOk = !(mChoose.size() < 4);
-                        if (patternOk) {
-                            setAnswer(mChoose);
-                            isFirstSet = false;
-                            firstSetAnswerStr = listToStr(mChoose);
-                        }
-                        setViewColor(patternOk);
-                        mOnGesturePasswordViewListener.onFirstSetPattern(patternOk);
-                    } else {
-                        isAnswerRight = checkAnswer();
-                        if (!isAnswerRight) {
-                            this.tryTimes--;
-                        }
-                        setViewColor(isAnswerRight);
-                        mOnGesturePasswordViewListener.onGestureEvent(isAnswerRight);
-                        if (this.tryTimes == 0) {
-                            // 剩余次数为0时进行一些处理（在使用该手势密码的activity中覆写）
-                            mOnGesturePasswordViewListener.onUnmatchedExceedBoundary();
-                        }
-                    }
+                    String answer = listToStr(mChoose);
+                    mOnGesturePasswordViewListener.onGestureEvent(answer);
                 }
 
                 Log.e(PWDLAYOUT_LOG_TAG, "mChoose = " + mChoose);
@@ -303,8 +274,8 @@ public class AIGesturePasswordLayout extends RelativeLayout {
                 mTmpTarget.x = mLastPathX;
                 mTmpTarget.y = mLastPathY;
 
-                // 改变子元素的状态为UP
-                changeItemMode();
+                // 改变子元素的状态为UP,默认,在未验证之前是作为对答案显示
+                changeItemMode(true);
 
                 // 计算每个元素中箭头需要旋转的角度
                 for (int i = 0; i + 1 < mChoose.size(); i++)
@@ -329,14 +300,14 @@ public class AIGesturePasswordLayout extends RelativeLayout {
         return true;
     }
 
-    private void changeItemMode()
+    private void changeItemMode(Boolean isRight)
     {
         for (AIGesturePasswordView gestureLockView : mGesturePasswordViews)
         {
             if (mChoose.contains(gestureLockView.getId()))
             {
                 gestureLockView.setViewColor(mFingerUpColor);
-                gestureLockView.setIsAnswerRight(isAnswerRight);// 调用
+                gestureLockView.setIsAnswerRight(isRight);
                 gestureLockView.setFingerStatus(AIGesturePasswordView.FingerStatus.STATUS_FINGER_UP, showPath);
             }
         }
@@ -353,7 +324,6 @@ public class AIGesturePasswordLayout extends RelativeLayout {
         }
         mChoose.clear();
         mPath.reset();
-        isAnswerRight = true;// 重置
         for (AIGesturePasswordView gestureLockView : mGesturePasswordViews)
         {
             gestureLockView.setFingerStatus(AIGesturePasswordView.FingerStatus.STATUS_NO_FINGER, showPath);
@@ -371,14 +341,6 @@ public class AIGesturePasswordLayout extends RelativeLayout {
     };
     private void delayReset() {
         mHandler.postDelayed(mRunnable, 1000);
-    }
-
-    /**
-     * 检查用户绘制的手势是否正确
-     * @return
-     */
-    private boolean checkAnswer() {
-        return mChoose.equals(mAnswer);
     }
 
     /**
@@ -433,31 +395,9 @@ public class AIGesturePasswordLayout extends RelativeLayout {
         this.mOnGesturePasswordViewListener = listener;
     }
 
-    /**
-     * 设置答案
-     * @param answer
-     */
-    private void setAnswer(List<Integer> answer) {
-        // 直接用赋值语句传递的是内存地址，会导致mChoose一改mAnswer就跟着改了
-        this.mAnswer.clear();
-        for (int i = 0; i < answer.size(); i++) {
-            this.mAnswer.add(answer.get(i));
-        }
-    }
-
-    /**
-     * 对外公布设置答案的方法
-     * @param answer
-     */
-    public void setAnswer(String answer) {
-        mAnswer.clear();
-        for (int i = 0; i < answer.length(); i++) {
-            mAnswer.add((int) answer.charAt(i) - 48);
-        }
-    }
 
     public String getChooseStr() {
-        return firstSetAnswerStr;
+        return listToStr(mChoose);
     }
 
     // 处理手势密码的字符串转换
@@ -472,29 +412,11 @@ public class AIGesturePasswordLayout extends RelativeLayout {
         return str;
     }
 
-    public int getTryTimes() {
-        return tryTimes;// 返回剩余次数
-    }
-
-    public void setTryTimes(int tryTimes) {
-        this.tryTimes = tryTimes;
-    }
-
-    /**
-     * 设置最大实验次数
-     *
-     * @param boundary
-     */
-    public void setUnMatchExceedBoundary(int boundary)
-    {
-        this.tryTimes = boundary;
-    }
-
     @Override
     public void dispatchDraw(Canvas canvas)
     {
         super.dispatchDraw(canvas);
-        if (!showPath && isAnswerRight) {
+        if (!showPath) {
             return;
         }
         //绘制GestureLockView间的连线
@@ -515,26 +437,15 @@ public class AIGesturePasswordLayout extends RelativeLayout {
     public interface OnGesturePasswordViewListener
     {
         /**
-         * 是否匹配
+         * 手势密码值
          *
-         * @param matched
+         * @param password
          */
-        void onGestureEvent(boolean matched);
-
-        /**
-         * 超过尝试次数
-         */
-        void onUnmatchedExceedBoundary();
-
-        /**
-         * 是否初始设置密码
-         * @param patternOk
-         */
-        void onFirstSetPattern(boolean patternOk);
+        void onGestureEvent(String password);
     }
 
     // 传入true，设为蓝色，传入false，设为红色
-    private void setViewColor(boolean isOk) {
+    public void setViewColor(boolean isOk) {
         if (isOk) {
             mFingerUpColor = mFingerOnColor;
         } else {
@@ -543,23 +454,15 @@ public class AIGesturePasswordLayout extends RelativeLayout {
         mPaint.setColor(mFingerUpColor);
         mPaint.setAlpha(255);
     }
-
-    // 记录答案是否正确
-    private boolean isAnswerRight = true;
     // 默认显示轨迹
     private boolean showPath = true;
-    // 对外公开的set方法
+
+
+    // 对外公开的set方法,在设置密码的时候一定要显示轨迹
     public void setShowPath(boolean showPath) {
-        this.showPath = showPath || isFirstSet;
+        this.showPath = showPath;
     }
 
-    // 默认false
-    private boolean isFirstSet = false;
-    // 是否是初次设置密码
-    public void isFirstSet(boolean isFirstSet) {
-        this.isFirstSet = isFirstSet;
-        setShowPath(true);// 强制显示路径
-    }
 
     // n * n的阵列，首位从0起算，计算公式：cId = x + n*y + 1
     private int checkChoose(int cId) {

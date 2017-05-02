@@ -1,12 +1,10 @@
-package com.ai.AIBase.config;
+package com.ai.base.config;
 
-import com.ai.AIBase.util.Parser;
-import com.ai.AIBase.util.Utility;
+import com.ai.base.util.Parser;
+import com.ai.base.util.Utility;
 import com.ailk.common.data.IData;
 import com.ailk.common.data.IDataset;
 import com.ailk.common.data.impl.DataMap;
-
-import java.io.InputStream;
 
 public class WebViewPluginCfg extends AbstractCfg {
 

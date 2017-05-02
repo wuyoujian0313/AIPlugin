@@ -1,10 +1,8 @@
-package com.ai.AIBase.config;
+package com.ai.base.config;
 
-import com.ai.AIBase.util.Parser;
-import com.ai.AIBase.util.Utility;
+import com.ai.base.util.Parser;
+import com.ai.base.util.Utility;
 import com.ailk.common.data.IData;
-
-import java.io.InputStream;
 
 public class GlobalCfg extends AbstractCfg {
 	public static final String CONFIG_FIELD_ONLINEADDR = "online.addr";

@@ -1,4 +1,4 @@
-package com.ai.AIBase.gesture;
+package com.ai.base.gesture;
 
 import android.content.Context;
 import android.graphics.Canvas;

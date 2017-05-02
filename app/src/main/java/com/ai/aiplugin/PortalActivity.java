@@ -19,9 +19,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.ai.AIBase.gesture.AIGesturePasswordActivity;
-import com.ai.AIBase.gesture.AISignatureActivity;
-import com.ai.AIBase.util.HttpUtil;
+import com.ai.base.AIBaseActivity;
+import com.ai.base.gesture.AIGesturePasswordActivity;
+import com.ai.base.gesture.AISignatureActivity;
+import com.ai.base.util.HttpUtil;
 import com.ai.aiplugin.R;
 import com.ryg.dynamicload.internal.DLIntent;
 import com.ryg.dynamicload.internal.DLPluginManager;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class PortalActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class PortalActivity extends AIBaseActivity implements AdapterView.OnItemClickListener {
     private ArrayList<PluginItem> mPluginItems = new ArrayList<PluginItem>();
     private PluginAdapter mPluginAdapter;
 
@@ -76,9 +77,6 @@ public class PortalActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void initData() {
-
-
-
         String pluginsFolderName = "Plugins";
         final String pluginFolder = getCacheDir().getAbsolutePath()+ "/" + pluginsFolderName;
         File folder = new File(pluginFolder);

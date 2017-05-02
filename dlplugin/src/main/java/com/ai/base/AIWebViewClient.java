@@ -1,4 +1,4 @@
-package com.ai.AIBase;
+package com.ai.base;
 
 import android.graphics.Bitmap;
 import android.net.http.SslError;

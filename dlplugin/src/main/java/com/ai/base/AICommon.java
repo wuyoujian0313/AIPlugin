@@ -1,4 +1,4 @@
-package com.ai.AIBase;
+package com.ai.base;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

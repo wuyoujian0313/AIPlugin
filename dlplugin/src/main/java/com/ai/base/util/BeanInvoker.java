@@ -1,12 +1,8 @@
-package com.ai.AIBase.util;
+package com.ai.base.util;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.ai.AIBase.util.Utility;
-import com.ailk.common.data.IData;
 
 public class BeanInvoker {
 	

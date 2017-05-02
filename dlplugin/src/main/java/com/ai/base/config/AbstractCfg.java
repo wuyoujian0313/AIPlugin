@@ -1,4 +1,4 @@
-package com.ai.AIBase.config;
+package com.ai.base.config;
 
 import com.ailk.common.data.IData;
 

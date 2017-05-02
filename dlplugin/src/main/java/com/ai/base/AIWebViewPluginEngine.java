@@ -1,12 +1,12 @@
-package com.ai.AIBase;
+package com.ai.base;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
-import com.ai.AIBase.config.WebViewPluginCfg;
-import com.ai.AIBase.util.BeanInvoker;
+import com.ai.base.config.WebViewPluginCfg;
+import com.ai.base.util.BeanInvoker;
 import com.ryg.dynamicload.DLBasePluginActivity;
 
 import java.io.InputStream;
