@@ -219,7 +219,8 @@ public class PortalActivity extends AIBaseActivity implements AdapterView.OnItem
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         PluginItem item = mPluginItems.get(position);
         DLPluginManager pluginManager = DLPluginManager.getInstance(this);
-        pluginManager.startPluginActivity(this, new DLIntent(item.packageInfo.packageName, item.launcherActivityName));
+        DLIntent intent = new DLIntent(item.packageInfo.packageName, item.launcherActivityName);
+        pluginManager.startPluginActivity(this,intent );
     }
 
     @Override

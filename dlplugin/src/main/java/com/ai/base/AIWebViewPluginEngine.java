@@ -2,14 +2,20 @@ package com.ai.base;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
 import com.ai.base.config.WebViewPluginCfg;
 import com.ai.base.util.BeanInvoker;
 import com.ryg.dynamicload.DLBasePluginActivity;
+import com.ryg.dynamicload.internal.DLPluginManager;
 
+import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+
+import dalvik.system.DexClassLoader;
 
 /**
  * Created by wuyoujian on 17/3/30.
@@ -19,7 +25,11 @@ public class AIWebViewPluginEngine {
 
     private WebView mWebView;
     private DLBasePluginActivity mActivity;
-    private String  mPluginCfgFile = "plugin.xml";
+    private String  mPluginCfgFile = "h5Plugin.xml";
+
+    protected DexClassLoader classLoader = null;
+
+    private String mApkPath;
 
     private Handler mHandler = new Handler();
 
@@ -37,6 +47,10 @@ public class AIWebViewPluginEngine {
         //
     }
 
+    public void setApkPath(String apkPath) {
+        this.mApkPath = apkPath;
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     public void registerPlugins(DLBasePluginActivity activity, WebView webView,String configFileName) {
 
@@ -44,17 +58,29 @@ public class AIWebViewPluginEngine {
         this.mWebView = webView;
         this.mPluginCfgFile = configFileName;
         try {
-            InputStream is = mActivity.getResources().getAssets().open(mPluginCfgFile);
+            InputStream is = mActivity.that.getResources().getAssets().open(mPluginCfgFile);
             WebViewPluginCfg plugincfg = WebViewPluginCfg.getInstance();
             plugincfg.parseConfig(is);
 
             String[] names = plugincfg.getNames();
             if (names.length > 0) mWebView.getSettings().setJavaScriptEnabled(true);
 
+            File dexPath = mActivity.that.getDir("dex", 0);
+
             for (String name : names) {
                 String className = plugincfg.attr(name, WebViewPluginCfg.CONFIG_ATTR_CLASS);
-                AIWebViewBasePlugin plugin = (AIWebViewBasePlugin) BeanInvoker.instance(className,DLBasePluginActivity.class,mActivity,false);
-                mWebView.addJavascriptInterface(plugin, name);
+                if (mApkPath != null) {
+                    classLoader = new DexClassLoader(mApkPath, dexPath.getAbsolutePath(), null, mActivity.that.getClassLoader());
+
+                    Class  mLoadClassDynamic = classLoader.loadClass(className);
+
+                    Constructor<?> constructor = mLoadClassDynamic.getConstructor(DLBasePluginActivity.class);
+                    AIWebViewBasePlugin plugin = (AIWebViewBasePlugin)constructor.newInstance(mActivity);
+                    mWebView.addJavascriptInterface(plugin, name);
+                } else {
+                    AIWebViewBasePlugin plugin = (AIWebViewBasePlugin) BeanInvoker.instance(className,DLBasePluginActivity.class,mActivity,false);
+                    mWebView.addJavascriptInterface(plugin, name);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
