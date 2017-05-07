@@ -11,23 +11,32 @@ import com.ryg.dynamicload.DLBasePluginActivity;
 
 public class AIWebViewBasePlugin {
 
-    private DLBasePluginActivity mActivity;
-
-    public AIWebViewBasePlugin(){}
-    public AIWebViewBasePlugin(DLBasePluginActivity activity) {
+    // 不采用动态插件
+    private AIBaseActivity mActivity;
+    public AIWebViewBasePlugin(AIBaseActivity activity) {
         this.mActivity = activity;
     }
-
-    public DLBasePluginActivity getActivity() {
+    public AIBaseActivity getActivity() {
         return mActivity;
     }
-    public void setActivity(DLBasePluginActivity activity) {
+    public void setActivity(AIBaseActivity activity) {
         this.mActivity = activity;
+    }
+
+    // 不采用动态插件
+    private DLBasePluginActivity mDLActivity;
+    public AIWebViewBasePlugin(DLBasePluginActivity activity) {
+        this.mDLActivity = activity;
+    }
+    public DLBasePluginActivity getDLActivity() {
+        return mDLActivity;
+    }
+    public void setDLActivity(DLBasePluginActivity activity) {
+        this.mDLActivity = activity;
     }
 
     @android.webkit.JavascriptInterface
     public void test(){
-        Toast.makeText(mActivity.that,"调用NA接口",Toast.LENGTH_SHORT).show();
     }
 }
 
