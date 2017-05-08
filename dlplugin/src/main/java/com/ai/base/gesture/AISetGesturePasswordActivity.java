@@ -25,13 +25,27 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
      * 发送密码设置结果广播
      */
     public static final String kPasswordCommitBroadcast = "com.ai.base.passwordCommit.LOCAL_BROADCAST";
-    public static final String kCommitBroadcastIntentKey = "kCommitBroadcastIntentKey";
-
     /**
      * 监听密码设置结果广播, 调用者发送这个广播,kCommitResultReceiverKey 数据类型是int 0标识密码通过
      */
     public static final String kCommitResultReceiver = "com.ai.base.commitResult.LOCAL_BROADCAST";
-    public static final String kCommitResultReceiverKey = "kCommitResultKey";
+
+    /**
+     * 从广播里获取密码的key,一般通过通知又带回出去
+     */
+    public static final String kGesturePasswordKey = "kGesturePassworkKey";
+
+    public static final String kCommitResultReceiverKey = "kCommitResultReceiverKey";
+
+    /**
+     * 从广播里获取用户名的key,一般通过通知又带回出去
+     */
+    public static final String kUserNameKey = "kUserNameKey";
+
+    /**
+     * 从广播里获取扩张字段key,一般通过通知又带回出去
+     */
+    public static final String kExtandKey = "kExtandKey";
 
     private RelativeLayout mRelativeLayout;
     private TextView mTextView;
@@ -46,7 +60,6 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setTitle("设置手势密码");
         this.initView();
     }
@@ -57,7 +70,12 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         Intent intent = new Intent(kPasswordCommitBroadcast);
-        intent.putExtra(kCommitBroadcastIntentKey,password);
+        intent.putExtra(kGesturePasswordKey,password);
+        String userName = getIntent().getStringExtra(kUserNameKey);
+        String extendData = getIntent().getStringExtra(kExtandKey);
+
+        intent.putExtra(kUserNameKey,userName);
+        intent.putExtra(kExtandKey,extendData);
         localBroadcastManager.sendBroadcast(intent);
 
         // 同时注册监听
@@ -65,7 +83,6 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
     }
 
     private void registerCommitResultReceier() {
-
         intentFilter = new IntentFilter();
         intentFilter.addAction(kCommitResultReceiver);
         localReceiver = new LocalReceiver();

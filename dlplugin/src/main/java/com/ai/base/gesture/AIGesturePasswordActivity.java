@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ai.base.AIActivityConfig;
+import com.ai.base.config.AIActivityConfig;
 import com.ai.base.AIBaseActivity;
 import com.ai.base.util.Utility;
 
@@ -24,17 +24,41 @@ import com.ai.base.util.Utility;
 public class AIGesturePasswordActivity extends AIBaseActivity {
 
     /**
-     * 发送密码校验结果广播
-      */
+     * 发送密码校验广播
+     */
 
     public static final String kPasswordCheckBroadcast = "com.ai.base.passwordCheck.LOCAL_BROADCAST";
-    public static final String kCheckBroadcastIntentKey = "kCheckBroadcastIntentKey";
+
+    /**
+     * 发送密码错误超过最大次数
+     */
+
+    public static final String kUnmatchedExceedBroadcast = "com.ai.base.unmatchedExceed.LOCAL_BROADCAST";
 
     /**
      * 监听密码校验结果广播, 调用者发送这个广播,kCheckResultReceiverKey 数据类型是int 0标识密码通过
      */
     public static final String kCheckResultReceiver = "com.ai.base.checkResult.LOCAL_BROADCAST";
+
+    /**
+     * 从广播里获取密码的key,一般通过通知又带回出去
+     */
+    public static final String kGesturePasswordKey = "kGesturePassworkKey";
+
+    /**
+     * 从广播里获取密码的key,一般通过通知又带回出去
+     */
     public static final String kCheckResultReceiverKey = "kCheckResultReceiverKey";
+
+    /**
+     * 从广播里获取用户名的key,一般通过通知又带回出去
+     */
+    public static final String kUserNameKey = "kUserNameKey";
+
+    /**
+     * 从广播里获取扩张字段key,一般通过通知又带回出去
+     */
+    public static final String kExtandKey = "kExtandKey";
 
     private LinearLayout mLinearLayout;
     private ImageView mImageView;
@@ -57,7 +81,13 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         Intent intent = new Intent(kPasswordCheckBroadcast);
-        intent.putExtra(kCheckBroadcastIntentKey,password);
+        intent.putExtra(kGesturePasswordKey,password);
+
+        String userName = getIntent().getStringExtra(kUserNameKey);
+        String extendData = getIntent().getStringExtra(kExtandKey);
+
+        intent.putExtra(kUserNameKey,userName);
+        intent.putExtra(kExtandKey,extendData);
         localBroadcastManager.sendBroadcast(intent);
 
         // 同时注册监听
@@ -74,7 +104,6 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
         }
     }
     private void registerCheckResultReceier() {
-
         intentFilter = new IntentFilter();
         intentFilter.addAction(kCheckResultReceiver);
         localReceiver = new LocalReceiver();
@@ -185,9 +214,18 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
      */
     private void unmatchedExceedBoundary() {
         // 正常情况这里需要做处理（如退出或重登）
-
         AIActivityConfig.getInstance().clearAlreadyGesturePassword();
         Toast.makeText(this, "错误次数太多，请重新用密码登录", Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(kUnmatchedExceedBroadcast);
+        String userName = getIntent().getStringExtra(kUserNameKey);
+        String extendData = getIntent().getStringExtra(kExtandKey);
+
+        intent.putExtra(kUserNameKey,userName);
+        intent.putExtra(kExtandKey,extendData);
+        localBroadcastManager.sendBroadcast(intent);
+
+        finish();
     }
 
     // 手势操作的回调监听

@@ -1,7 +1,9 @@
-package com.ai.base;
+package com.ai.base.config;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+
+import com.ai.base.AIActivityCollector;
 
 /**
  * Created by wuyoujian on 17/5/1.
@@ -31,11 +33,11 @@ public class AIActivityConfig {
         editor.apply();
     }
 
-    public Boolean isAlreadyGesturePassword() {
+    public boolean isAlreadyGesturePassword() {
         SharedPreferences sharedPreferences= AIActivityCollector.getInstance().rootActivity().getSharedPreferences("AIActivityConfig",
                 Activity.MODE_PRIVATE);
         //实例化SharedPreferences.Editor对象
-        Boolean isAlready = sharedPreferences.getBoolean(kSharedPreferencesKey_AlreadyGesturePWD,false);
+        boolean isAlready = sharedPreferences.getBoolean(kSharedPreferencesKey_AlreadyGesturePWD,false);
 
         return isAlready;
     }
