@@ -6,9 +6,14 @@ import com.ailk.common.data.IData;
 
 public class GlobalCfg extends AbstractCfg {
 	public static final String CONFIG_FIELD_ONLINEADDR = "online.addr";
+
+	public static final String CONFIG_FIELD_ONLINEADDR_APK = "online.apksAddr";
 	public static final String CONFIG_FIELD_ENCRYPTKEY = "encryptKey";
 	public static final String CONFIG_FIELD_ZHSTRING = "ZH_String";
-	
+	public static final String CONFIG_FIELD_IDMD5Key = "IDMD5Key";
+	public static final String CONFIG_FIELD_VERSION = "version";
+	public static final String CONFIG_FIELD_PUBLICKEY = "publicKey";
+
 	private static GlobalCfg instance;
 	
 	/**

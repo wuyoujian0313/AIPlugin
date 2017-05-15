@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ai.base.AIBaseActivity;
+import com.ai.base.config.ActivityConfig;
 import com.ai.base.util.Utility;
 
 /**
@@ -45,6 +47,11 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
     /**
      * 从广播里获取扩张字段key,一般通过通知又带回出去
      */
+    public static final String kPhoneNumber = "kPhoneNumber";
+
+    /**
+     * 从广播里获取扩张字段key,一般通过通知又带回出去
+     */
     public static final String kExtandKey = "kExtandKey";
 
     private RelativeLayout mRelativeLayout;
@@ -73,9 +80,11 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
         intent.putExtra(kGesturePasswordKey,password);
         String userName = getIntent().getStringExtra(kUserNameKey);
         String extendData = getIntent().getStringExtra(kExtandKey);
+        String phoneNumber = getIntent().getStringExtra(kPhoneNumber);
 
         intent.putExtra(kUserNameKey,userName);
         intent.putExtra(kExtandKey,extendData);
+        intent.putExtra(kPhoneNumber,phoneNumber);
         localBroadcastManager.sendBroadcast(intent);
 
         // 同时注册监听
@@ -98,8 +107,15 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
             if (code == 0) {
                 mTextView.setText("密码设置成功");
                 mGesturePasswordLayout.setViewColor(true);
+
+                ActivityConfig.getInstance().setAlreadyGesturePassword();
                 //
                 finish();
+            } else {
+                mTextView.setText("密码设置失败,请重新设置");
+                mGesturePasswordLayout.setViewColor(false);
+                mFirstPassword = "";
+                mTryTimes = 3;
             }
         }
     }
@@ -107,13 +123,16 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        localBroadcastManager.unregisterReceiver(localReceiver);
+        if (localBroadcastManager != null && localReceiver != null) {
+            localBroadcastManager.unregisterReceiver(localReceiver);
+        }
     }
 
 
     private void initView() {
 
         mRelativeLayout = new RelativeLayout(this);
+        mRelativeLayout.setBackgroundColor(Color.WHITE);
         mRelativeLayout.setPadding(Utility.dip2px(this,16),Utility.dip2px(this,16),
                 Utility.dip2px(this,16),Utility.dip2px(this,16));
 
@@ -129,6 +148,7 @@ public class AISetGesturePasswordActivity extends AIBaseActivity {
 
         mTextView = new TextView(this);
         mTextView.setText("请绘制手势密码");
+        mTextView.setTextColor(Color.BLACK);
         mTextView.setTextSize(16);
         mTextView.setGravity(Gravity.CENTER);
         mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
@@ -13,8 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ai.base.config.AIActivityConfig;
+import com.ai.base.config.ActivityConfig;
 import com.ai.base.AIBaseActivity;
+import com.ai.base.config.GlobalCfg;
+import com.ai.base.util.AESEncrypt;
+import com.ai.base.util.LocalStorageManager;
 import com.ai.base.util.Utility;
 
 /**
@@ -58,6 +62,11 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
     /**
      * 从广播里获取扩张字段key,一般通过通知又带回出去
      */
+    public static final String kPhoneNumber = "kPhoneNumber";
+
+    /**
+     * 从广播里获取扩张字段key,一般通过通知又带回出去
+     */
     public static final String kExtandKey = "kExtandKey";
 
     private LinearLayout mLinearLayout;
@@ -65,6 +74,9 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
     private TextView mTextView;
     private AIGesturePasswordLayout mGesturePasswordLayout;
 
+    private String mUsername;
+    private String mExtendData;
+    private String mPhoneNumber;
     /**
      * 最大尝试次数
      */
@@ -83,11 +95,9 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
         Intent intent = new Intent(kPasswordCheckBroadcast);
         intent.putExtra(kGesturePasswordKey,password);
 
-        String userName = getIntent().getStringExtra(kUserNameKey);
-        String extendData = getIntent().getStringExtra(kExtandKey);
-
-        intent.putExtra(kUserNameKey,userName);
-        intent.putExtra(kExtandKey,extendData);
+        intent.putExtra(kUserNameKey,mUsername);
+        intent.putExtra(kExtandKey,mExtendData);
+        intent.putExtra(kPhoneNumber,mPhoneNumber);
         localBroadcastManager.sendBroadcast(intent);
 
         // 同时注册监听
@@ -113,19 +123,41 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        localBroadcastManager.unregisterReceiver(localReceiver);
+        if (localBroadcastManager != null && localReceiver != null) {
+            localBroadcastManager.unregisterReceiver(localReceiver);
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("手势密码");
+
+        try {
+            String encryptKey = GlobalCfg.getInstance().attr(GlobalCfg.CONFIG_FIELD_ENCRYPTKEY);
+            String publicKey = GlobalCfg.getInstance().attr(GlobalCfg.CONFIG_FIELD_PUBLICKEY);
+            String key = AESEncrypt.decrypt(encryptKey,publicKey);
+            LocalStorageManager.getInstance().setContext(this);
+            LocalStorageManager.getInstance().setEncryptKey(key);
+
+            String userName = LocalStorageManager.getInstance().getString("ACC4A");
+            String phoneNumber = LocalStorageManager.getInstance().getString("SERIAL_NUMBER");
+            String extendData = LocalStorageManager.getInstance().getString(kExtandKey);
+
+            mUsername = userName;
+            mPhoneNumber = phoneNumber;
+            mExtendData = extendData;
+        } catch (Exception e) {
+
+        }
+
         initView();
     }
 
     private void initView() {
 
         mLinearLayout = new LinearLayout(this);
+        mLinearLayout.setBackgroundColor(Color.WHITE);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
 
@@ -150,6 +182,7 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         mTextView = new TextView(this);
         mTextView.setText("请绘制手势密码");
+        mTextView.setTextColor(Color.BLACK);
         mTextView.setTextSize(16);
         mTextView.setGravity(Gravity.CENTER);
         mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -214,15 +247,12 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
      */
     private void unmatchedExceedBoundary() {
         // 正常情况这里需要做处理（如退出或重登）
-        AIActivityConfig.getInstance().clearAlreadyGesturePassword();
+        ActivityConfig.getInstance().clearAlreadyGesturePassword();
         Toast.makeText(this, "错误次数太多，请重新用密码登录", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(kUnmatchedExceedBroadcast);
-        String userName = getIntent().getStringExtra(kUserNameKey);
-        String extendData = getIntent().getStringExtra(kExtandKey);
-
-        intent.putExtra(kUserNameKey,userName);
-        intent.putExtra(kExtandKey,extendData);
+        intent.putExtra(kUserNameKey,mUsername);
+        intent.putExtra(kExtandKey,mExtendData);
         localBroadcastManager.sendBroadcast(intent);
 
         finish();

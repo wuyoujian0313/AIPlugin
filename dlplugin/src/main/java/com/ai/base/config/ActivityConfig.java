@@ -9,11 +9,11 @@ import com.ai.base.AIActivityCollector;
  * Created by wuyoujian on 17/5/1.
  */
 
-public class AIActivityConfig {
+public class ActivityConfig {
 
     private String kSharedPreferencesKey_AlreadyGesturePWD = "kSharedPreferencesKey_DeviceId";
     private long kDurTime = 60*1000;
-    private static AIActivityConfig instance;
+    private static ActivityConfig instance;
     // 保存最后一次调用onPause()的系统时间戳
     private long lockTime = 0;
 
@@ -23,7 +23,7 @@ public class AIActivityConfig {
 
     public void setAlreadyGesturePassword() {
         // 从本地读取
-        SharedPreferences sharedPreferences= AIActivityCollector.getInstance().rootActivity().getSharedPreferences("AIActivityConfig",
+        SharedPreferences sharedPreferences= AIActivityCollector.getInstance().rootActivity().getSharedPreferences("ActivityConfig",
                 Activity.MODE_PRIVATE);
         //实例化SharedPreferences.Editor对象
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -34,7 +34,7 @@ public class AIActivityConfig {
     }
 
     public boolean isAlreadyGesturePassword() {
-        SharedPreferences sharedPreferences= AIActivityCollector.getInstance().rootActivity().getSharedPreferences("AIActivityConfig",
+        SharedPreferences sharedPreferences= AIActivityCollector.getInstance().rootActivity().getSharedPreferences("ActivityConfig",
                 Activity.MODE_PRIVATE);
         //实例化SharedPreferences.Editor对象
         boolean isAlready = sharedPreferences.getBoolean(kSharedPreferencesKey_AlreadyGesturePWD,false);
@@ -43,7 +43,7 @@ public class AIActivityConfig {
     }
 
     public void clearAlreadyGesturePassword() {
-        SharedPreferences sharedPreferences= AIActivityCollector.getInstance().rootActivity().getSharedPreferences("AIActivityConfig",
+        SharedPreferences sharedPreferences= AIActivityCollector.getInstance().rootActivity().getSharedPreferences("ActivityConfig",
                 Activity.MODE_PRIVATE);
         //实例化SharedPreferences.Editor对象
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -52,10 +52,10 @@ public class AIActivityConfig {
     }
 
 
-    public static AIActivityConfig getInstance() {
+    public static ActivityConfig getInstance() {
         if (instance == null) {
-            synchronized (AIActivityConfig.class) {
-                instance = new AIActivityConfig();
+            synchronized (ActivityConfig.class) {
+                instance = new ActivityConfig();
             }
         }
         return instance;

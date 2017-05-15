@@ -41,7 +41,7 @@ public class AESEncrypt {
             byte[] raw = key.getBytes("utf-8");
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            IvParameterSpec iv = new IvParameterSpec(ivParameter.getBytes());
+            IvParameterSpec iv = new IvParameterSpec(ivParameter.getBytes("utf-8"));
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 
             // 先用base64解密
