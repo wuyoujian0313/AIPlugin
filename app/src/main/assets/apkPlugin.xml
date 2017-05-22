@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<apkPlugins>
-    <apk name="crmapp_debug.apk" packageName="com.ai.crmapp"
-        activityClass="com.ai.crmapp.MainActivity"></apk>
-</apkPlugins>

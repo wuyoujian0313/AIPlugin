@@ -1,7 +1,6 @@
 package com.ai.base;
 
 import android.webkit.JavascriptInterface;
-import android.widget.Toast;
 
 import com.ryg.dynamicload.DLBasePluginActivity;
 
@@ -35,7 +34,7 @@ public class AIWebViewBasePlugin {
         this.mDLActivity = activity;
     }
 
-    @android.webkit.JavascriptInterface
+    @JavascriptInterface
     public void test(){
     }
 }

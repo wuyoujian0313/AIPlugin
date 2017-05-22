@@ -4,9 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Size;
 import android.widget.ImageView;
 
 import com.ai.base.util.Utility;
@@ -30,9 +30,9 @@ public class AIMaskView extends ImageView {
 
         initPaint();
         mContext = context;
-        Size s	= Utility.getScreenMetrics(mContext);
-        mWidthScreen = s.getWidth();
-        mHeightScreen = s.getHeight();
+        Point s	= Utility.getScreenMetrics(mContext);
+        mWidthScreen = s.x;
+        mHeightScreen = s.y;
     }
 
     private void initPaint(){

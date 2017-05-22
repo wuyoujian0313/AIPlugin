@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.view.View;
@@ -25,58 +26,19 @@ import com.ai.base.util.Utility;
  * Created by wuyoujian on 17/4/27.
  */
 
-public class AIGesturePasswordActivity extends AIBaseActivity {
-
-    /**
-     * 发送密码校验广播
-     */
-
-    public static final String kPasswordCheckBroadcast = "com.ai.base.passwordCheck.LOCAL_BROADCAST";
-
-    /**
-     * 发送密码错误超过最大次数
-     */
-
-    public static final String kUnmatchedExceedBroadcast = "com.ai.base.unmatchedExceed.LOCAL_BROADCAST";
-
-    /**
-     * 监听密码校验结果广播, 调用者发送这个广播,kCheckResultReceiverKey 数据类型是int 0标识密码通过
-     */
-    public static final String kCheckResultReceiver = "com.ai.base.checkResult.LOCAL_BROADCAST";
-
-    /**
-     * 从广播里获取密码的key,一般通过通知又带回出去
-     */
-    public static final String kGesturePasswordKey = "kGesturePassworkKey";
-
-    /**
-     * 从广播里获取密码的key,一般通过通知又带回出去
-     */
-    public static final String kCheckResultReceiverKey = "kCheckResultReceiverKey";
-
-    /**
-     * 从广播里获取用户名的key,一般通过通知又带回出去
-     */
-    public static final String kUserNameKey = "kUserNameKey";
-
-    /**
-     * 从广播里获取扩张字段key,一般通过通知又带回出去
-     */
-    public static final String kPhoneNumber = "kPhoneNumber";
-
-    /**
-     * 从广播里获取扩张字段key,一般通过通知又带回出去
-     */
-    public static final String kExtandKey = "kExtandKey";
+public class AILocGesturePasswordActivity extends AIBaseActivity {
 
     private LinearLayout mLinearLayout;
     private ImageView mImageView;
     private TextView mTextView;
     private AIGesturePasswordLayout mGesturePasswordLayout;
 
-    private String mUsername;
-    private String mExtendData;
-    private String mPhoneNumber;
+    /**
+     * 发送密码错误结果广播
+     */
+    public static final String kPasswordErrorBroadcast = "com.ai.base.passwordError.LOCAL_BROADCAST";
+
+    private String mAnswer;
     /**
      * 最大尝试次数
      */
@@ -86,46 +48,9 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
         mTryTimes = tryTimes;
     }
 
-
-    private LocalBroadcastManager localBroadcastManager;
-    private IntentFilter intentFilter;
-    private void sendPasswordCheckBroadcast(String password) {
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
-
-        Intent intent = new Intent(kPasswordCheckBroadcast);
-        intent.putExtra(kGesturePasswordKey,password);
-
-        intent.putExtra(kUserNameKey,mUsername);
-        intent.putExtra(kExtandKey,mExtendData);
-        intent.putExtra(kPhoneNumber,mPhoneNumber);
-        localBroadcastManager.sendBroadcast(intent);
-
-        // 同时注册监听
-        registerCheckResultReceier();
-    }
-
-
-    private LocalReceiver localReceiver;
-    private class LocalReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int code = intent.getIntExtra(kCheckResultReceiverKey,0);
-            setCheckStatus(code == 0);
-        }
-    }
-    private void registerCheckResultReceier() {
-        intentFilter = new IntentFilter();
-        intentFilter.addAction(kCheckResultReceiver);
-        localReceiver = new LocalReceiver();
-        localBroadcastManager.registerReceiver(localReceiver,intentFilter);
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (localBroadcastManager != null && localReceiver != null) {
-            localBroadcastManager.unregisterReceiver(localReceiver);
-        }
     }
 
     @Override
@@ -140,15 +65,9 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
             LocalStorageManager.getInstance().setContext(this);
             LocalStorageManager.getInstance().setEncryptKey(key);
 
-            String userName = LocalStorageManager.getInstance().getString("ACC4A");
-            String phoneNumber = LocalStorageManager.getInstance().getString("SERIAL_NUMBER");
-            String extendData = LocalStorageManager.getInstance().getString(kExtandKey);
-
-            mUsername = userName;
-            mPhoneNumber = phoneNumber;
-            mExtendData = extendData;
+            String answer = LocalStorageManager.getInstance().getString("answer");
+            this.mAnswer = answer;
         } catch (Exception e) {
-
         }
 
         initView();
@@ -208,7 +127,6 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
         moveTaskToBack(true);
     }
 
-
     private void setCheckStatus(Boolean bSuc) {
         if(bSuc) {
             mTextView.setText("输入正确");
@@ -235,13 +153,26 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
                     mGesturePasswordLayout.setViewColor(false);
                     return;
                 } else {
-                    sendPasswordCheckBroadcast(password);
+                    if (password.equalsIgnoreCase(mAnswer)) {
+                        setCheckStatus(true);
+                    } else {
+                        setCheckStatus(false);
+                    }
                 }
             } else {
                 unmatchedExceedBoundary();
             }
         }
     }
+
+    private LocalBroadcastManager localBroadcastManager;
+    private void sendPasswordErrorBroadcast() {
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        Intent intent = new Intent(kPasswordErrorBroadcast);
+        localBroadcastManager.sendBroadcast(intent);
+    }
+
+
     /**
      * 处理输错次数超限的情况
      */
@@ -250,11 +181,7 @@ public class AIGesturePasswordActivity extends AIBaseActivity {
         ActivityConfig.getInstance().clearAlreadyGesturePassword();
         Toast.makeText(this, "错误次数太多，请重新用密码登录", Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(kUnmatchedExceedBroadcast);
-        intent.putExtra(kUserNameKey,mUsername);
-        intent.putExtra(kExtandKey,mExtendData);
-        localBroadcastManager.sendBroadcast(intent);
-
+        sendPasswordErrorBroadcast();
         finish();
     }
 

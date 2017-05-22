@@ -19,7 +19,6 @@
 package com.ryg.dynamicload;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -38,9 +37,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import com.ai.base.AIBaseActivity;
 import com.ryg.dynamicload.internal.DLIntent;
 import com.ryg.dynamicload.internal.DLPluginManager;
 import com.ryg.dynamicload.internal.DLPluginPackage;
@@ -52,7 +49,7 @@ import com.ryg.utils.DLConstants;
  * @see {@link DLBasePluginActivity.that}
  * @author renyugang
  */
-public class DLBasePluginActivity extends AIBaseActivity implements DLPlugin {
+public class DLBasePluginActivity extends AppCompatActivity implements DLPlugin {
 
     private static final String TAG = "DLBasePluginActivity";
 

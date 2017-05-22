@@ -1,1 +1,1 @@
-include ':app', ':dlplugin'
+include ':dlplugin'

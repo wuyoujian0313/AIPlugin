@@ -1,15 +1,12 @@
 package com.ai.base.util;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Size;
 
-import com.ai.base.AIActivityCollector;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -109,11 +106,11 @@ public class Utility {
 	 * @param context
 	 * @return
 	 */
-	public static android.util.Size getScreenMetrics(Context context){
+	public static Point getScreenMetrics(Context context){
 		DisplayMetrics dm =context.getResources().getDisplayMetrics();
 		int w_screen = dm.widthPixels;
 		int h_screen = dm.heightPixels;
-		return new android.util.Size(w_screen, h_screen);
+		return new Point(w_screen,h_screen);
 	}
 
 	/**
@@ -122,9 +119,9 @@ public class Utility {
 	 * @return
 	 */
 	public static float getScreenRate(Context context){
-		Size s = getScreenMetrics(context);
-		float H = s.getHeight();
-		float W = s.getWidth();
+		Point s = getScreenMetrics(context);
+		float H = s.y;
+		float W = s.x;
 		return (H/W);
 	}
 

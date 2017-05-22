@@ -68,6 +68,8 @@ public class AIWebViewPluginEngine {
             for (String name : names) {
                 String className = plugincfg.attr(name, WebViewPluginCfg.CONFIG_ATTR_CLASS);
                 if (mApkPath != null) {
+
+                    // 从插件里加载
                     classLoader = new DexClassLoader(mApkPath, dexPath.getAbsolutePath(), null, mDLActivity.that.getClassLoader());
 
                     Class  mLoadClassDynamic = classLoader.loadClass(className);

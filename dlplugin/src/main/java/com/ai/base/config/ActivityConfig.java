@@ -21,6 +21,14 @@ public class ActivityConfig {
         this.kDurTime = kDurTime;
     }
 
+    public void setLockTime(long lockTime) {
+        this.lockTime = lockTime;
+    }
+
+    public long getLockTime() {
+        return lockTime;
+    }
+
     public void setAlreadyGesturePassword() {
         // 从本地读取
         SharedPreferences sharedPreferences= AIActivityCollector.getInstance().rootActivity().getSharedPreferences("ActivityConfig",
