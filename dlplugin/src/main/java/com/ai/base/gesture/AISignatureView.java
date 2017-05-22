@@ -4,12 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
+import android.util.Size;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -185,6 +187,53 @@ public class AISignatureView extends View {
 
     /**
      * 保存画板
+     * @param path 保存到路径
+     * @param multiple 缩放率(0 - 1)
+     */
+    public void save(String path, float multiple)  throws IOException {
+        save(path, false, 0, multiple);
+    }
+
+    /**
+     * 保存画板
+     * @param path       保存到路径
+     * @param clearBlank 是否清除边缘空白区域
+     * @param blank  要保留的边缘空白距离
+     */
+    public void save(String path, boolean clearBlank, int blank, float multiple) throws IOException {
+
+        Bitmap bitmap= mCacheBitmap;
+        if (clearBlank) {
+            bitmap = clearBlank(bitmap, blank);
+        }
+
+        // 获取这个图片的宽和高
+        float width = bitmap.getWidth();
+        float height = bitmap.getHeight();
+        // 创建操作图片用的matrix对象
+        Matrix matrix = new Matrix();
+        // 缩放图片动作
+        matrix.postScale(multiple, multiple);
+        Bitmap b = Bitmap.createBitmap(bitmap, 0, 0, (int) width,
+                (int) height, matrix, true);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        b.compress(Bitmap.CompressFormat.PNG, 100, bos);
+
+        byte[] buffer = bos.toByteArray();
+        if (buffer != null) {
+            File file = new File(path);
+            if (file.exists()) {
+                file.delete();
+            }
+            OutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(buffer);
+            outputStream.close();
+        }
+    }
+
+    /**
+     * 保存画板
      * @param path       保存到路径
      * @param clearBlank 是否清除边缘空白区域
      * @param blank  要保留的边缘空白距离
@@ -192,7 +241,6 @@ public class AISignatureView extends View {
     public void save(String path, boolean clearBlank, int blank) throws IOException {
 
         Bitmap bitmap= mCacheBitmap;
-        //BitmapUtil.createScaledBitmapByHeight(srcBitmap, 300);//  压缩图片
         if (clearBlank) {
             bitmap = clearBlank(bitmap, blank);
         }
